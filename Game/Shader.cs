@@ -102,6 +102,10 @@ namespace Game
         }
 
 
+        //public int GetAttribLocation(string attribName)
+        //{
+        //    return GL.GetAttribLocation(handle, attribName);
+        //}
 
     }
 }

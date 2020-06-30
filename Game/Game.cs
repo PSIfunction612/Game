@@ -11,8 +11,9 @@ namespace Game
         float[] verticles =
         {
             -0.5f, -0.5f, 0.0f,
+            -0.5f, 0.5f, 0.0f,
+            0.5f, 0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,
-            0.0f, 0.5f, 0.0f
         };
 
         int VertexBufferObject; //VBO
@@ -65,14 +66,11 @@ namespace Game
             GL.Clear(ClearBufferMask.ColorBufferBit); //закрашиваю фон окна цветом
             //начали отрисовку
             shader.Use();
+
+            //shader.GetAttribLocation("aPosition");
+
             GL.BindVertexArray(VertexArrayObject);
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
-
-            //рисуем!!!!
-            //Здесь будет функция для трегольника
-
-
-            //GL.Clear(ClearBufferMask.ColorBufferBit); //закрашиваю фон окна цветом
+            GL.DrawArrays(PrimitiveType.Quads, 0, 4);
 
             Context.SwapBuffers(); //двойная буферизация, скину видео на эту тему
             base.OnRenderFrame(e);
@@ -83,5 +81,7 @@ namespace Game
             GL.Viewport(0, 0, Width, Height);
             base.OnResize(e);
         }
+
+
     }
 }
