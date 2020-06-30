@@ -15,7 +15,8 @@ namespace Game
             0.0f, 0.5f, 0.0f
         };
 
-        int VertexBufferObject;
+        int VertexBufferObject; //VBO
+        int VertexArrayObject; //VAO
 
         Shader shader;
 
@@ -36,8 +37,18 @@ namespace Game
         protected override void OnLoad(EventArgs e)
         {
             shader = new Shader("shader.vert", "shader.frag");
-            GL.ClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+            GL.ClearColor(0.2f, 0.3f, 0.5f, 1.0f);
             VertexBufferObject = GL.GenBuffer(); //выделили память под точки
+            VertexArrayObject = GL.GenVertexArray(); //выделили память под VAO
+
+            GL.BindVertexArray(VertexArrayObject);
+            //VBO
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
+            GL.BufferData(BufferTarget.ArrayBuffer, verticles.Length * sizeof(float), verticles, BufferUsageHint.StaticDraw);
+            //VAO
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(0);
+
             base.OnLoad(e);
         }
 
@@ -51,20 +62,17 @@ namespace Game
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
+            GL.Clear(ClearBufferMask.ColorBufferBit); //закрашиваю фон окна цветом
             //начали отрисовку
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, verticles.Length * sizeof(float), verticles, BufferUsageHint.StaticDraw);
-
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3*sizeof(float), 0);
-            GL.EnableVertexAttribArray(0);
-
             shader.Use();
+            GL.BindVertexArray(VertexArrayObject);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
 
             //рисуем!!!!
             //Здесь будет функция для трегольника
 
 
-            GL.Clear(ClearBufferMask.ColorBufferBit); //закрашиваю фон окна цветом
+            //GL.Clear(ClearBufferMask.ColorBufferBit); //закрашиваю фон окна цветом
 
             Context.SwapBuffers(); //двойная буферизация, скину видео на эту тему
             base.OnRenderFrame(e);
