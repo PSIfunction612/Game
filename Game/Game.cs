@@ -10,16 +10,16 @@ namespace Game
     {
         float[] verticles =
         {
-            -0.5f, -0.5f, 0.0f,
-            -0.5f, 0.5f, 0.0f,
-            0.5f, 0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
+            -0.5f, -0.5f, 0.0f, 0.0f,  0.0f,
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.5f, 0.0f,  0.5f, 1.0f,
         };
 
         int VertexBufferObject; //VBO
         int VertexArrayObject; //VAO
 
         Shader shader;
+        Texture texture;
 
         public Game(int width, int height, string title)
             :base(width, height, GraphicsMode.Default, title){ }
@@ -38,6 +38,7 @@ namespace Game
         protected override void OnLoad(EventArgs e)
         {
             shader = new Shader("shader.vert", "shader.frag");
+            texture = new Texture("texture.png");
             GL.ClearColor(0.2f, 0.3f, 0.5f, 1.0f);
             VertexBufferObject = GL.GenBuffer(); //выделили память под точки
             VertexArrayObject = GL.GenVertexArray(); //выделили память под VAO
@@ -47,8 +48,12 @@ namespace Game
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
             GL.BufferData(BufferTarget.ArrayBuffer, verticles.Length * sizeof(float), verticles, BufferUsageHint.StaticDraw);
             //VAO
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            //вершины
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
+            //для координат текстуры
+            GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(1);
 
             base.OnLoad(e);
         }
@@ -65,12 +70,11 @@ namespace Game
         {
             GL.Clear(ClearBufferMask.ColorBufferBit); //закрашиваю фон окна цветом
             //начали отрисовку
+            texture.Use();
             shader.Use();
 
-            //shader.GetAttribLocation("aPosition");
-
             GL.BindVertexArray(VertexArrayObject);
-            GL.DrawArrays(PrimitiveType.Quads, 0, 4);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
 
             Context.SwapBuffers(); //двойная буферизация, скину видео на эту тему
             base.OnRenderFrame(e);
@@ -81,7 +85,5 @@ namespace Game
             GL.Viewport(0, 0, Width, Height);
             base.OnResize(e);
         }
-
-
     }
 }
