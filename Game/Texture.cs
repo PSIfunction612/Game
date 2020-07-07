@@ -29,7 +29,7 @@ namespace Game
                                 image.Height, 
                                 0, 
                                 PixelFormat.Bgra, 
-                                PixelType.Byte, 
+                                PixelType.UnsignedByte, 
                                 data.Scan0);
                 
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
@@ -42,8 +42,9 @@ namespace Game
             }
         }
 
-        public void Use()
+        public void Use(TextureUnit unit = TextureUnit.Texture0)
         {
+            GL.ActiveTexture(unit);
             GL.BindTexture(TextureTarget.Texture2D, handle);
         }
 

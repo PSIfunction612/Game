@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using OpenTK.Graphics.OpenGL;
@@ -8,6 +9,8 @@ namespace Game
     class Shader : IDisposable
     {
         int handle;
+
+        private readonly Dictionary<string, int> _uniformLocations;
 
         //переменная-флаг для удаления
         bool disposedValue = false;
@@ -71,6 +74,25 @@ namespace Game
             //удалили уже ненужные шейдеры
             GL.DeleteShader(FragmentShader);
             GL.DeleteShader(VertexShader);
+
+            GL.GetProgram(handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
+
+            _uniformLocations = new Dictionary<string, int>();
+
+            for (var i = 0; i < numberOfUniforms; ++i)
+            {
+                var key = GL.GetActiveUniform(handle, i, out _, out _);
+                var location = GL.GetUniformLocation(handle, key);
+                _uniformLocations.Add(key, location);
+            }
+
+        }
+
+
+        public void SetInt(string name, int data)
+        {
+            GL.UseProgram(handle);
+            GL.Uniform1(_uniformLocations[name], data);
         }
 
         protected virtual void Dispose(bool disposing)
