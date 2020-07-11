@@ -105,12 +105,20 @@ namespace Game
             //начали отрисовку
             GL.BindVertexArray(VertexArrayObject);
 
+            var transform = Matrix4.Identity;
+            transform *= Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(45.0f)); //поворот по z
+
+            transform *= Matrix4.CreateScale(0.5f); //масштабирование
+            transform *= Matrix4.CreateTranslation(0.3f, 0.1f, 0.0f); //сдвиг
+
             texture.Use();
             texture1.Use(TextureUnit.Texture1);
             shader.Use();
 
+
+            shader.SetMatrix4("transform", transform);
+
             GL.DrawElements(BeginMode.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
-            //GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
 
             Context.SwapBuffers(); //двойная буферизация, скину видео на эту тему
             base.OnRenderFrame(e);

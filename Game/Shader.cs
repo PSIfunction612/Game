@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace Game
@@ -93,6 +94,13 @@ namespace Game
         {
             GL.UseProgram(handle);
             GL.Uniform1(_uniformLocations[name], data);
+        }
+
+
+        public void SetMatrix4(string name, Matrix4 data)
+        {
+            GL.UseProgram(handle);
+            GL.UniformMatrix4(_uniformLocations[name], true, ref data);
         }
 
         protected virtual void Dispose(bool disposing)
