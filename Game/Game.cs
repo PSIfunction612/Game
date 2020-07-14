@@ -3,6 +3,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Input;
 using OpenTK.Graphics.OpenGL4;
+using System.Net.Http.Headers;
 
 namespace Game
 {
@@ -33,6 +34,12 @@ namespace Game
         int VertexBufferObject; //VBO
         int VertexArrayObject; //VAO
 
+        Matrix4 model;
+        Matrix4 view;
+        Matrix4 projection;
+
+        double time;
+        int counter;
         Shader shader;
         Texture texture;
         Texture texture1;
@@ -54,7 +61,7 @@ namespace Game
         protected override void OnLoad(EventArgs e)
         {
             GL.ClearColor(0.2f, 0.3f, 0.5f, 1.0f);
-
+            GL.Enable(EnableCap.DepthTest);
             //VBO
             VertexBufferObject = GL.GenBuffer(); //выделили память под точки
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
@@ -88,6 +95,12 @@ namespace Game
             GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
             GL.EnableVertexAttribArray(1);
 
+
+            model = Matrix4.Identity;
+            view = Matrix4.CreateTranslation(0, 0, -3.0f);
+            projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45f), Width / (float)Height, 0.1f, 100.0f);
+
+
             base.OnLoad(e);
         }
 
@@ -101,22 +114,33 @@ namespace Game
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
-            GL.Clear(ClearBufferMask.ColorBufferBit); //закрашиваю фон окна цветом
+            time += 100*e.Time;
+            /*if (counter > 60)
+            {
+                Console.WriteLine(time);
+                counter = 0; 
+            }
+            else
+            {
+                counter++;
+            }*/
+            
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit); //закрашиваю фон окна цветом
             //начали отрисовку
             GL.BindVertexArray(VertexArrayObject);
-
-            var transform = Matrix4.Identity;
-            transform *= Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(45.0f)); //поворот по z
-
-            transform *= Matrix4.CreateScale(0.5f); //масштабирование
-            transform *= Matrix4.CreateTranslation(0.3f, 0.1f, 0.0f); //сдвиг
 
             texture.Use();
             texture1.Use(TextureUnit.Texture1);
             shader.Use();
 
 
-            shader.SetMatrix4("transform", transform);
+            model = Matrix4.Identity * Matrix4.CreateRotationY(MathHelper.DegreesToRadians((float)time));
+
+            shader.SetMatrix4("model", model);
+            shader.SetMatrix4("view", view);
+            shader.SetMatrix4("projection", projection);
+
+            
 
             GL.DrawElements(BeginMode.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
 
