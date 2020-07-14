@@ -18,16 +18,30 @@ namespace Game
 
         float[] verticles =
         {
-            0.5f, 0.5f, 0.0f, 1.0f,  1.0f,
-            0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-            -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+            0.5f, 0.5f, -0.5f, 1.0f,  1.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+            0.5f, 0.5f, 0.5f, 0.0f,  1.0f,
+            0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+            -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
         };
 
         uint[] indices =
         {
             0, 1, 3,
             1, 2, 3,
+            0, 4, 5,
+            0, 1 ,5,
+            3, 2, 7,
+            7, 2, 6,
+            1, 2, 5,
+            2, 5, 6,
+            7, 4, 0,
+            7, 3, 0,
+            7, 5, 4,
+            7, 5, 6,
         };
 
         int ElementBufferObject; //EBO
@@ -134,7 +148,7 @@ namespace Game
             shader.Use();
 
 
-            model = Matrix4.Identity * Matrix4.CreateRotationY(MathHelper.DegreesToRadians((float)time));
+            model = Matrix4.Identity * Matrix4.CreateRotationY(MathHelper.DegreesToRadians((float)time)) * Matrix4.CreateRotationX( MathHelper.DegreesToRadians((float)time));
 
             shader.SetMatrix4("model", model);
             shader.SetMatrix4("view", view);
